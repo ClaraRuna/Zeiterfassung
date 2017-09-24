@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,8 +29,8 @@ public class ReadFile {
          this.file=new File(filePath);
      }
 
-    public Set<Customer> execute (){
-        Set <Customer> customers = new HashSet<Customer>();
+    public ArrayList<Customer> execute (){
+        ArrayList <Customer> customers = new ArrayList<>();
         if(file.exists()){
             try{
 
@@ -63,8 +64,8 @@ public class ReadFile {
         }
     }
 
-    private Set <Customer> readCustomerArray(){
-        Set <Customer> customers = new HashSet<Customer>();
+    private ArrayList<Customer> readCustomerArray(){
+        ArrayList <Customer> customers = new ArrayList<Customer>();
         try{
             InputStream in = new FileInputStream(file);
             JsonReader reader = new JsonReader(new InputStreamReader(in));

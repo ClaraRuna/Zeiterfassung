@@ -3,13 +3,14 @@ package com.example.runa.filedownloadtest;
 import android.content.Context;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Created by runa on 21.09.17.
  */
 
-public class Customer {
+public class Customer implements Serializable{
 
     String name;
     Integer number;
