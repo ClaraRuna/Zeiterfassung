@@ -90,11 +90,12 @@ public class CustomerAdapter extends ArrayAdapter implements Filterable {
                 final ArrayList<Customer> filteredCustomers = new ArrayList<Customer>(count);
 
                 Customer customer;
+                Log.d("filterString", filterString.toString());
 
                 for (int i = 0; i < count; i++) {
                     customer=allCustomers.get(i);
-                    if (customer.getName().contains(filterString)
-                            || customer.getNumber().toString().contains(filterString)) {
+                    if (customer.getName().toLowerCase().contains(filterString)
+                            || customer.getNumber().toString().toLowerCase().contains(filterString)) {
                         filteredCustomers.add(customer);
                     }
                 }

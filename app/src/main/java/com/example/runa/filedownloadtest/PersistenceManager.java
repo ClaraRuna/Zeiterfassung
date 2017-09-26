@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * Created by runa on 22.09.17.
@@ -62,20 +63,20 @@ public class PersistenceManager {
                     reader.beginArray();
                     while (reader.hasNext()){
                         reader.beginObject();
-                        String task="default";
-                        Integer count = -1;
+                        Task task = new Task();
                         while (reader.hasNext()){
+
                             if (reader.nextName()=="Name"){
-                                task=reader.nextString();
+                                task.setName(reader.nextString());
                             }
                             else if (reader.nextName()=="Count"){
-                                count=(reader.nextInt());
+                                task.setCount(reader.nextInt());
                             }
                             else{
                                 Log.d("ERRR", "cannot evaluate JSON name (@task lvl) ");
                             }
                         }
-                        customer.setTasks(task, count);
+                        customer.setTasks(task);
                         reader.endObject();
                     }
                     reader.endArray();
@@ -123,11 +124,11 @@ public class PersistenceManager {
         return out;
     }
 
-    private void writeTasks(JsonWriter writer, HashMap<String, Integer> tasks) throws IOException{
-        for (Map.Entry<String, Integer> task : tasks.entrySet()) {
+    private void writeTasks(JsonWriter writer, SortedSet<Task> tasks) throws IOException{
+        for (Task t : tasks){
             writer.beginObject();
-            writer.name("Name").value(task.getKey());
-            writer.name("Count").value(task.getValue());
+            writer.name("Name").value(t.getName());
+            writer.name("Count").value(t.getCount());
             writer.endObject();
         }
     }

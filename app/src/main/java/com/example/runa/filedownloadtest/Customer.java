@@ -1,10 +1,18 @@
 package com.example.runa.filedownloadtest;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Created by runa on 21.09.17.
@@ -15,11 +23,12 @@ public class Customer implements Serializable{
     String name;
     Integer number;
     File file;          //File, in wich customer information is stored
-    HashMap<String, Integer> tasks; //Map that stores how often Tasks were executed at the customer
+    SortedSet<Task> tasks;
 
     public Customer (Integer cNr, String cName){
         name=cName;
         number=cNr;
+        tasks = new TreeSet<Task>();
     }
 
     public Customer(){
@@ -37,8 +46,7 @@ public class Customer implements Serializable{
     }
     public boolean setNumber(Integer number) {this.number=number; return true;}
 
-    public HashMap<String, Integer> getTasks(){
-        return tasks;
+    public SortedSet<Task> getTasks(){ return tasks;
     }
 
     public String toString(){
@@ -46,22 +54,29 @@ public class Customer implements Serializable{
     }
 
     //addTask ( task, count ) is for constructing the tasklist from json
-    public boolean setTasks (String task, Integer count){
-        tasks.put(task, count);
+    public boolean setTasks (Task task){
+        tasks.add(task);
         return true;
     }
 
     //addTask (task) is for counting up during usage of app
-    public boolean addTask (String task){
-        //if the task does not jet exist, put it to map
-        if (!tasks.containsKey(task)){
-            tasks.put(task, 1);
+    public Task doTask (Task task){
+        Boolean isTaskNew = true;
+        //as task implements comparable this should work
+        for (Task t: tasks ) {
+            if(task.getName().toLowerCase().equals(t.getName().toLowerCase())){
+                t.setCount(t.getCount()+1);
+                isTaskNew = false;
+            }
         }
-        //otherwise, increment task-counter
-        else{
-            tasks.put(task, tasks.get(task)+1);
+        //if the task is taken from alltasks list the task needs to be copied
+        if (isTaskNew==true){
+            Task newTask = new Task (task);
+            tasks.add(newTask);
+            newTask.incrementCount();
+            return newTask;
         }
-        return true;
+        return task;
     }
 
 }

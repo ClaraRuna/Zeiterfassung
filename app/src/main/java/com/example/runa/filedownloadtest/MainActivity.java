@@ -19,12 +19,9 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     /*
-
      * TODO Current task (start time, end time, total time, automatic send mail after ending)
      *
      * TODO GUI
-     *  TODO make array adapter work (we need a custom adapter)
-     *  TODO editText (Customer search): update selectable customers automaticaly
      *  TODO history: last used customer at top of customerlist
      *  TODO task selection activity
      *  TODO start/pause/finish task
@@ -38,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     // List with customers
     private ArrayList<Customer> customers;
     // List with all tasks
-    private ArrayList<String> allTasks;
+    private ArrayList<Task> allTasks;
 
     //GUI Elements
     private TextView tvSelectCustomer;
@@ -73,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
 
         //read the file
         ReadFile readFile = new ReadFile(filePath);
+        Log.d("contents of file", filePath);
+        readFile.printFile();
         newCustomers = readFile.execute();
 
         //compare servers customers (old and new ones) with apps customers (old ones) and add new customers on server to app
@@ -98,10 +97,25 @@ public class MainActivity extends AppCompatActivity {
             Log.d("INFO", "no customer list existed, added all new ones to the list");
             customers=newCustomers;
         }
+        buildTaskList();
     }
 
-    private void buildTaskList(){
-        //TODO read all tasks from customers and build list
+    private void buildTaskList() {
+        allTasks=new ArrayList<Task>();
+        for (Customer c : customers) {
+            //if a task in a customer's task list is not yet in the list of all tasks, add it
+            for (Task task : c.getTasks()) {
+                Boolean isTaskNew = true;
+                for (Task t : allTasks) {
+                    if (t == task) { //this should work as task is comparable
+                        isTaskNew = false;
+                    }
+                }
+                if (isTaskNew == false) {
+                    allTasks.add(task);
+                }
+            }
+        }
     }
 
     private void initializeGUI() {
@@ -144,16 +158,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void startTaskSelectionActivity(int position){
         Customer customer = customers.get(position);
+        //put the last recently used customer on top of the list
+        customers.remove(customer);
+        customers.add(0, customer);
         Intent i = new Intent(this, TaskSelectionActivity.class);
         i.putExtra("customer", customer);
-        startActivityForResult(i, 42); //nr 42 is random, only to determine wich new activity returned
-        //TODO when task is selected, update the customer and persist it in order to keep taskcounter up to date
+        i.putExtra("allTasks", allTasks);
+        startActivity(i);
     }
-
-
-
-
-        //TODO add on text change listener to etSearch
-
 
 }

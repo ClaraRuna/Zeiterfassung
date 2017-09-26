@@ -3,4 +3,7 @@
     <string name="selectCustomer">Bitte wählen Sie den Kunden</string>
     <string name="customer">Kunde</string>
     <string name="search">suchen</string>
+    <string name="searchOrCreate">Tätigkeit suchen oder neuen Namen eingeben</string>
+    <string name="newTask">neu</string>
+    <string name="selectTask">Bitte wählen Sie die Tätigkeit</string>
 </resources>
