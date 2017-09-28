@@ -9,9 +9,11 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static java.lang.System.in;
 
@@ -24,8 +26,8 @@ public class ReadFile {
     String filePath;
     File file=null;
 
-     public ReadFile(String filePath){
-         this.filePath=filePath;
+    public ReadFile(String filePath){
+         this.filePath = filePath;
          this.file=new File(filePath);
      }
 
@@ -65,7 +67,7 @@ public class ReadFile {
     }
 
     private ArrayList<Customer> readCustomerArray(){
-        ArrayList <Customer> customers = new ArrayList<Customer>();
+        ArrayList <Customer> customers = new ArrayList<>();
         try{
             InputStream in = new FileInputStream(file);
             JsonReader reader = new JsonReader(new InputStreamReader(in));

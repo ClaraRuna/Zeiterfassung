@@ -2,6 +2,7 @@ package com.example.runa.filedownloadtest;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.io.File;
 import java.io.Serializable;
@@ -32,8 +33,10 @@ public class Customer implements Serializable{
     }
 
     public Customer(){
+        Log.d("customer()", "called");
         name="defaultname";
         number=-1;
+        tasks = new TreeSet<Task>();
     }
 
     public String getName() {

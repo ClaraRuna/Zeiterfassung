@@ -12,11 +12,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Created by runa on 22.09.17.
@@ -30,46 +32,65 @@ public class PersistenceManager {
     private File folder;
 
     public PersistenceManager (Context context){
+        //create the folder with the customers if it does not exist jet
         this.context= context;
         this.folderPath= context.getFilesDir().toString()
                 + "/customers";
         folder= new File(folderPath);
 
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+        Log.d("folder.exists()", Boolean.toString(folder.exists()));
+
     }
 
-    public Set<Customer> loadCustomers(){
-        Set <Customer> customers = new HashSet<Customer>() ;
+    public ArrayList<Customer> loadCustomers(){
+        ArrayList <Customer> customers = new ArrayList<Customer>() ;
         //read all the files in the customers directory and construct each customer
+        Log.d("reading", "customers");
+        Log.d("nr of customer files", Integer.toString(folder.listFiles().length));
         for (File file : folder.listFiles()){
-            customers.add(readCustomer(file));
+            if (!(readCustomer(file)==null)){
+                customers.add(readCustomer(file));
+            }
+            Log.d("found file", file.getName());
+            ReadFile fileContent = new ReadFile(file.getPath());
+            fileContent.printFile();
         }
         return customers;
     }
 
     private Customer readCustomer(File file){
+        Log.d("PersistenceManager", "readCustomer()");
         Customer customer = new Customer();
         try {
             InputStream in = new FileInputStream(file);
             JsonReader reader = new JsonReader(new InputStreamReader(in));
             reader.beginObject();
             while (reader.hasNext()) {
-                if (reader.nextName()=="Number"){
+                Log.d("reader.peek()", reader.peek().toString());
+                String name=reader.nextName();
+                Log.d("reader.nextName()", name);
+                if (name.equals("Number")){
                     customer.setNumber(reader.nextInt());
                 }
-                else if (reader.nextName()=="Name"){
+                else if (name.equals("Name")){
                     customer.setName(reader.nextString());
                 }
-                else if (reader.nextName()=="Tasks"){
+                else if (name.equals("Tasks")){
                     reader.beginArray();
                     while (reader.hasNext()){
                         reader.beginObject();
                         Task task = new Task();
                         while (reader.hasNext()){
+                            name = reader.nextName();
+                            Log.d("reader.nextName()", name);
 
-                            if (reader.nextName()=="Name"){
+                            if (name.equals("Name")){
                                 task.setName(reader.nextString());
                             }
-                            else if (reader.nextName()=="Count"){
+                            else if (name.equals("Count")){
                                 task.setCount(reader.nextInt());
                             }
                             else{
@@ -86,21 +107,26 @@ public class PersistenceManager {
                 }
             }
             reader.endObject();
+            Log.d("PersistenceManager", "evaluated customer " +customer.toString());
+            Log.d("TaskList", ":::::::::::::::::::::::::::::::");
+            for (Task t : customer.getTasks()){
+                Log.d(t.getName(), Integer.toString(t.getCount()));
+            }
+            return customer;
         }
         catch (Exception e) {
             e.printStackTrace();
         }
-        return customer;
+        return null;
     }
 
-    private String writeCustomer (Customer customer){
+    public String writeCustomer (Customer customer){
         String out ="";
         //File to store customer information in
         String filePath=context.getFilesDir().toString()
-                + "/" + customer.getNumber().toString();
+                + "/customers/" + customer.getNumber().toString();
         File file = new File (filePath);
         //json String representing the customer
-        //TODO write JSON, maybe not with FileWriter but with JsonWriter?
         try{
             JsonWriter writer = new JsonWriter(new FileWriter(file));
             writer.setIndent("  ");

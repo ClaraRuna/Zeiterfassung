@@ -2,6 +2,8 @@ package com.example.runa.filedownloadtest;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,11 +12,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,30 +40,36 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Customer> customers;
     // List with all tasks
     private ArrayList<Task> allTasks;
+    private PersistenceManager persistenceManager;
 
     //GUI Elements
     private TextView tvSelectCustomer;
     private EditText etSearch;
     private CustomerAdapter cListAdapter;
     private ListView lvCustomers;
+    private Button btnUpdate;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         context = getApplicationContext();
         super.onCreate(savedInstanceState);
+        //load customers
+        Log.d("creating", "persistenceManager");
+        persistenceManager = new PersistenceManager(context);
+        Log.d("MainActivity", "customers=persistenceManager.loadCustomers()");
+        customers=persistenceManager.loadCustomers();
 
         setContentView(R.layout.activity_main);
 
-        //TODO update button -> update only on demand
-        updateCustomers();
-
-        initializeGUI();
+        initialize();
 
 
     }
 
     private void updateCustomers(){
+        Log.d("MainActivity", "updateCustomers()");
+
         //List to store customers that are currently in the database
         ArrayList <Customer> newCustomers = null;
 
@@ -67,8 +77,13 @@ public class MainActivity extends AppCompatActivity {
         DownloadFileFromURL downloader = new DownloadFileFromURL(context, "test.json");
         filePath = downloader.getFilePath();
         downloader.execute(file_url);
+        try{
+            downloader.get(1000, TimeUnit.MILLISECONDS);
+        }
+        catch (Exception e){
+           Log.d("ERRR", "iwie wurde auf den download nicht gewartet oder so...");
+        }
 
-        //read the file
         ReadFile readFile = new ReadFile(filePath);
         Log.d("contents of file", filePath);
         readFile.printFile();
@@ -78,16 +93,20 @@ public class MainActivity extends AppCompatActivity {
         //if a customer list already exists
         if (customers!=null){
             for (Customer newC : newCustomers ){
+                Log.d("customers.size()", Integer.toString(customers.size()));
+                Log.d("compare newC", newC.toString());
                 boolean isNew = true;
-                for (Customer C : customers){
-                    if (C.getName()==newC.getName() && C.getNumber()==newC.getNumber()){
+                for (Customer c : customers){
+                    Log.d("to oldC", c.toString());
+                    if (c.getName().equals(newC.getName()) && c.getNumber().equals(newC.getNumber())){
                         isNew = false;
                         break;
                     }
                 }
-                if (isNew = true){
-                    Customer newCustomer = new Customer(newC.getNumber(), newC.getName());
-                    Log.d("Added new Customer", newCustomer.toString());
+                Log.d("resulting isNew", Boolean.toString(isNew));
+                if (isNew == true){
+                    customers.add(newC);
+                    Log.d("Added new Customer", newC.toString());
                 }
 
             }
@@ -97,7 +116,11 @@ public class MainActivity extends AppCompatActivity {
             Log.d("INFO", "no customer list existed, added all new ones to the list");
             customers=newCustomers;
         }
-        buildTaskList();
+        Log.d("customers.size()", Integer.toString(customers.size()));
+        cListAdapter.notifyDataSetChanged();
+        for (Customer c : customers){
+            persistenceManager.writeCustomer(c);
+        }
     }
 
     private void buildTaskList() {
@@ -118,9 +141,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void initializeGUI() {
+    private void initialize() {
+        buildTaskList(); //init list of all tasks
         //Initialize SearchField (EditText)
         etSearch = (EditText) findViewById(R.id.etSearch);
+        btnUpdate =(Button) findViewById(R.id.btnUpdate);
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -134,6 +159,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
+            }
+        });
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateCustomers();
             }
         });
         //Initialize ListView

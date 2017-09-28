@@ -6,4 +6,12 @@
     <string name="searchOrCreate">Tätigkeit suchen oder neuen Namen eingeben</string>
     <string name="newTask">neu</string>
     <string name="selectTask">Bitte wählen Sie die Tätigkeit</string>
+    <string name="pauseTask">pausieren</string>
+    <string name="continueTask">weiter machen</string>
+    <string name="finishTask">beenden</string>
+    <string name="taskInfoCustomer">"Sie sind beim Kunden "</string>
+    <string name="taskInfoTask">" beschäftigt mit "</string>
+    <string name="eMailAdress">buchhaltung@sonith.de</string>
+    <string name="task">Tätigkeit</string>
+    <string name="duration">Dauer</string>
 </resources>

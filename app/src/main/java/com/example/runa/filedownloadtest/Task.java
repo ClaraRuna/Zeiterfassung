@@ -46,5 +46,9 @@ public class Task implements Serializable, Comparable<Task>{
         else return count-t.getCount();
     }
 
+    public String toString(){
+        return name;
+    }
+
 
 }

@@ -15,8 +15,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TaskSelectionActivity">
-        </activity>
+        <activity android:name=".TaskSelectionActivity"></activity>
+        <activity android:name=".TimeTakingActivity"></activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
 

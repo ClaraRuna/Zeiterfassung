@@ -3,7 +3,6 @@ package com.example.runa.filedownloadtest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,12 +15,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-import java.util.SortedSet;
 
 /**
  * Created by runa on 24.09.17.
@@ -87,15 +82,15 @@ public class TaskSelectionActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                update();
-            }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
-            public void afterTextChanged(Editable editable) {}
+            public void afterTextChanged(Editable editable) {
+                update();
+            }
         });
         //Initialize ListView
-        tvSelectTask = (TextView) findViewById(R.id.tvSelectTask);
+        tvSelectTask = (TextView) findViewById(R.id.tvInfo);
         tvSelectTask.setText(getResources().getString(R.string.selectTask));
 
         //tvSelectTask.setText(R.string.selectTask);
@@ -151,8 +146,12 @@ public class TaskSelectionActivity extends AppCompatActivity {
 
     private void startTimeTakingActivity (Task task){
         customer.doTask(task);
+        Log.d("executing", "customer.doTask(task)");
+        Log.d("c.getTasks.size()", Integer.toString(customer.getTasks().size()));
         Intent i = new Intent ( this, TimeTakingActivity.class);
+        persistenceManager.writeCustomer(customer);
         i.putExtra("task",task );
+        i.putExtra("customer", customer);
         startActivity(i);
     }
 
