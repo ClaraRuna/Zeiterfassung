@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.runa.filedownloadtest.MainActivity">
+    tools:context="com.example.runa.filedownloadtest.MainActivity"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true" >
 
     <TextView
         android:text="TextView"

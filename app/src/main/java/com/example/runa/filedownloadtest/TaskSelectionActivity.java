@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Filter;
 
 /**
  * Created by runa on 24.09.17.
@@ -27,7 +28,6 @@ public class TaskSelectionActivity extends AppCompatActivity {
     private Context context;
     private ArrayList<Task> customerTasks;
     private ArrayList<Task> allTasks;
-    private ArrayList<Task> tasks; //the tasks that the adapter is working with: if search is empty: customer task, otherwise allTasks (filtered)
     private ArrayAdapter taskListAdapter;
     private Customer customer;
     private PersistenceManager persistenceManager;
@@ -44,17 +44,21 @@ public class TaskSelectionActivity extends AppCompatActivity {
         persistenceManager = new PersistenceManager(context);
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_task_selection);
+
+        initializeData();
+        initializeGUI();
+    }
+
+    private void initializeData(){
         customer = (Customer) getIntent().getExtras().get("customer") ;
         Log.d("selected customer", customer.toString());
         customerTasks=new ArrayList<Task>(customer.getTasks());
+        Log.d("customerTasks.size()", Integer.toString(customerTasks.size()));
         allTasks=new ArrayList<Task>((ArrayList<Task>)getIntent().getExtras().get("allTasks"));
         //sort tasks by count
         Collections.sort(customerTasks);
         Collections.sort(allTasks);
-
-        setContentView(R.layout.activity_task_selection);
-
-        initializeGUI();
     }
 
     private void initializeGUI(){
@@ -72,28 +76,26 @@ public class TaskSelectionActivity extends AppCompatActivity {
                 btnNewTask.setVisibility(View.INVISIBLE);
             }
         });
-        tasks=customerTasks;
         //simple_list_item_2 would also be possible
         taskListAdapter =
-                new ArrayAdapter(this, android.R.layout.simple_list_item_1,  tasks);
-        update();
+                new TaskAdapter(this, android.R.layout.simple_list_item_1,  customerTasks, allTasks);
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
             @Override
             public void afterTextChanged(Editable editable) {
                 update();
             }
         });
-        //Initialize ListView
+        //Initialize lnfo textField ("select task @ customer")
         tvSelectTask = (TextView) findViewById(R.id.tvInfo);
-        tvSelectTask.setText(getResources().getString(R.string.selectTask));
+        tvSelectTask.setText(getResources().getString(R.string.customer) + ": " + customer.getName() +"\n" + getResources().getString(R.string.selectTask));
 
-        //tvSelectTask.setText(R.string.selectTask);
         lvTasks = (ListView) findViewById(R.id.lvTasks);
         lvTasks.setAdapter(taskListAdapter);
         lvTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -105,42 +107,23 @@ public class TaskSelectionActivity extends AppCompatActivity {
 
     }
 
-    private void update(){
-        //if nothing is searched for, show customers tasks
-        if (etSearch.getText().length()==0){
-            tasks=customerTasks;
-            taskListAdapter.notifyDataSetChanged();
-            //newTask button is not clickable
-            btnNewTask.setClickable(false);
-            btnNewTask.setVisibility(View.INVISIBLE);
-        }
-        else {
-            tasks=allTasks;
-            taskListAdapter.getFilter().filter(etSearch.getText());
-            //if no task matches the search criteria, offer to create a new one
-            if (taskListAdapter.isEmpty()){
-                //button new Task is clickable
-                btnNewTask.setClickable(true);
-                btnNewTask.setVisibility(View.VISIBLE);
-
-            }
-            else {
-                // button new task not clickable
-                btnNewTask.setClickable(false);
-                btnNewTask.setVisibility(View.INVISIBLE);
-
-            }
-        }
-        Log.d("c.getTasks().size()", Integer.toString(customer.getTasks().size()));
-        Log.d("customerTasks.size()", Integer.toString(customerTasks.size()));
-        Log.d("allTasks.size()", Integer.toString(allTasks.size()));
-        for (Task t : customer.getTasks()){
-            Log.d(t.getName(), Integer.toString(t.getCount()));
+    private class Updater implements android.widget.Filter.FilterListener{
+        @Override
+        public void onFilterComplete(int i) {
+            update();
         }
     }
 
+    private void update(){
+        taskListAdapter.getFilter().filter(etSearch.getText(), lvTasks);
+        //i tried some stuff here, nothing worked
+        Log.d("tlAdapter.getCount()", Integer.toString(taskListAdapter.getCount()));
+        Log.d("lvTasks.getCount()", Integer.toString(lvTasks.getCount()));
+
+    }
+
     private void startTimeTakingActivity(int position){
-        Task task = tasks.get(position);
+        Task task = (Task) taskListAdapter.getItem(position);
         startTimeTakingActivity(task);
     }
 

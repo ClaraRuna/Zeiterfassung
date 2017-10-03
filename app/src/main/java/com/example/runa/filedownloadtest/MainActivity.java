@@ -23,12 +23,16 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
     /*
-     * TODO Current task (start time, end time, total time, automatic send mail after ending)
-     *
-     * TODO GUI
-     *  TODO history: last used customer at top of customerlist
-     *  TODO task selection activity
-     *  TODO start/pause/finish task
+     * TODO : Feature: Weitere Tätigkeiten zu laufender Tätigkeit hinzufügen können
+     * TODO : Bug: Beenden hält Task nicht an
+     * TODO : Feature: Auswahl von zwischenzeiten beim Hinzufügen von Untertasks
+     * TODO : Feature: Toast ob Update der Kundenliste erfolgt
+     * TODO : Feature: Start und Endzeit Manuell anpassen
+     * TODO : Bug: Übernimmt Name nach Update der Kundendb in der Anzeige in welcher die Uhr läuft nich korrekt
+     *  Für den Bug hilft nur der Workarround die App abzuschießen und neu zu starten. Hängt wohl mit dem Beenden zusammen.
+     * TODO : Feature: Icon in Leiste oben wenn aktiv
+     * TODO : authentifizierung
+     * TODO : android keystore
       */
 
     Context context;
@@ -130,11 +134,11 @@ public class MainActivity extends AppCompatActivity {
             for (Task task : c.getTasks()) {
                 Boolean isTaskNew = true;
                 for (Task t : allTasks) {
-                    if (t == task) { //this should work as task is comparable
+                    if (t.getName().equals(task.getName())) { //this should work as task is comparable
                         isTaskNew = false;
                     }
                 }
-                if (isTaskNew == false) {
+                if (isTaskNew == true) {
                     allTasks.add(task);
                 }
             }

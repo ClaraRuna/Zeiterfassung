@@ -29,8 +29,6 @@ public class TimeTakingActivity extends AppCompatActivity {
     private boolean isPaused;
     private CountDownTimer countDownTimer; //used to update the view
 
-    int tickCounter;
-
     //GUI
     private Button btnFinish;
     private Button btnPause;
@@ -52,13 +50,11 @@ public class TimeTakingActivity extends AppCompatActivity {
         isPaused=false;
         task=(Task)getIntent().getExtras().get("task");
         customer=(Customer)getIntent().getExtras().get("customer");
-        tickCounter=0;
         countDownTimer=new CountDownTimer(86400000, 1000) {
             @Override
             public void onTick(long l) {
                 updateTotalTime();
                 updateView();
-                Log.d("timer ticked", Integer.toString(tickCounter++) );
             }
 
             @Override
@@ -80,9 +76,7 @@ public class TimeTakingActivity extends AppCompatActivity {
         btnFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!isPaused){
-                    updateTotalTime();
-                }
+                countDownTimer.cancel();
                 startMailActivity();
             }
         });
@@ -126,28 +120,42 @@ public class TimeTakingActivity extends AppCompatActivity {
             long minutes;
             long seconds;
 
+            //calculate whole seconds/min/hrs
             seconds = totalTime / 1000;
             minutes = seconds / 60;
             hours = minutes / 60;
 
-            tvTotalTime.setText(String.format("%02d", (hours % 60)) + ":" + String.format("%02d", (minutes % 60)) + ":" + String.format("%02d", (seconds) ));
+            //subtract whole hours from minutes
+            minutes = minutes % 60;
+            //subtract whole minutes from seconds
+            seconds = seconds % 60;
+
+
+            tvTotalTime.setText(String.format("%02d", (hours )) + ":" + String.format("%02d", (minutes )) + ":" + String.format("%02d", (seconds) ));
 
 
     }
 
     private void startMailActivity(){
+        // get the data to write into the mail
         String date = Calendar.getInstance().getTime().toString();
         String text =
                 date + "\n"+ getResources().getString(R.string.customer) + ": " +
                         customer.getName() + " (" + customer.getNumber() + ") \n" +
                         getResources().getString(R.string.task) + ": " + task.getName() + "\n" +
                         getResources().getString(R.string.duration) + ": " + tvTotalTime.getText();
+        String [] recipient = {getResources().getString(R.string.eMailAdress)};
+        // start the new intent and hand the data over
         Intent mailIntent = new Intent(Intent.ACTION_SEND);
-        mailIntent.setData(Uri.parse("mailto:" + getResources().getString(R.string.eMailAdress)));
+        mailIntent.setData(Uri.parse("mailto:"));
         mailIntent.setType("text/plain");
-        mailIntent.putExtra(Intent.EXTRA_SUBJECT, "app_name" + ": " + customer.getName() + " (" + customer.getNumber() + ")");
+        mailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.app_name) + ": " + customer.getName() + " (" + customer.getNumber() + ")");
         mailIntent.putExtra(Intent.EXTRA_TEXT, text);
+        mailIntent.putExtra(Intent.EXTRA_EMAIL, recipient);
         startActivity(mailIntent);
+        //after the mail was sent, go back to main activity
+        //recreate (reset) the activity
+        this.finish();
     }
 
 }
