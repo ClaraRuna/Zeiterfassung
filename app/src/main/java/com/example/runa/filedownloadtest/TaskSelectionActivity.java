@@ -107,13 +107,6 @@ public class TaskSelectionActivity extends AppCompatActivity {
 
     }
 
-    private class Updater implements android.widget.Filter.FilterListener{
-        @Override
-        public void onFilterComplete(int i) {
-            update();
-        }
-    }
-
     private void update(){
         taskListAdapter.getFilter().filter(etSearch.getText(), lvTasks);
         //i tried some stuff here, nothing worked
