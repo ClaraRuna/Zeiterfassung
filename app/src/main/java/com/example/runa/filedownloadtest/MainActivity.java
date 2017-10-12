@@ -23,6 +23,10 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
     /*
+     * TODO : maybe change activity flow?
+     *  main -> taskselection -> (main) -> timetaking -> main -> taskselection
+     * TODO : write persistent data in onPause() method
+     *  because the running activity can be killed at any instant so that persisting operations might not be executed
      * TODO : Feature: Weitere Tätigkeiten zu laufender Tätigkeit hinzufügen können
      * TODO : Bug: Beenden hält Task nicht an
      * TODO : Feature: Auswahl von zwischenzeiten beim Hinzufügen von Untertasks

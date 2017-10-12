@@ -155,6 +155,7 @@ public class TimeTakingActivity extends AppCompatActivity {
         startActivity(mailIntent);
         //after the mail was sent, go back to main activity
         //recreate (reset) the activity
+        this.setResult(RESULT_OK);
         this.finish();
     }
 

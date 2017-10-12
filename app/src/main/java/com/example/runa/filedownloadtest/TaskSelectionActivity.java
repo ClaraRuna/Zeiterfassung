@@ -109,7 +109,14 @@ public class TaskSelectionActivity extends AppCompatActivity {
 
     private void update(){
         taskListAdapter.getFilter().filter(etSearch.getText(), lvTasks);
-        //i tried some stuff here, nothing worked
+        /*i unsuccessfully tried some stuff here, like:
+        if (etSearch.getText().length()==0){
+            taskListAdapter.clear();
+            taskListAdapter.addAll(customerTasks);
+            taskListAdapter.notifyDataSetChanged();
+        }
+        --had the same outcome
+         */
         Log.d("tlAdapter.getCount()", Integer.toString(taskListAdapter.getCount()));
         Log.d("lvTasks.getCount()", Integer.toString(lvTasks.getCount()));
 
@@ -128,7 +135,19 @@ public class TaskSelectionActivity extends AppCompatActivity {
         persistenceManager.writeCustomer(customer);
         i.putExtra("task",task );
         i.putExtra("customer", customer);
-        startActivity(i);
+        int requestCode=42;
+        startActivityForResult(i, requestCode);
+    }
+
+    //when the email is send, TimeTaking returns with requestCode 42
+    protected void onActivityResult(int requestCode, int resultCode){
+        Log.d("taskSelectionActivity", "result received: requestcode = " + requestCode + " resultCode = " + resultCode);
+        if (requestCode==42){
+            this.finish();
+        }
+        else {
+            Log.d("somewhere" , "sth went wrong (activity returned with unknown requestCode)");
+        }
     }
 
 
