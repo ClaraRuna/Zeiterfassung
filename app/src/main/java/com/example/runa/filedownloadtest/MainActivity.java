@@ -2,8 +2,6 @@ package com.example.runa.filedownloadtest;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,7 +9,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -23,12 +20,9 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
     /*
-     * TODO : maybe change activity flow?
-     *  main -> taskselection -> (main) -> timetaking -> main -> taskselection
      * TODO : write persistent data in onPause() method
      *  because the running activity can be killed at any instant so that persisting operations might not be executed
      * TODO : Feature: Weitere Tätigkeiten zu laufender Tätigkeit hinzufügen können
-     * TODO : Bug: Beenden hält Task nicht an
      * TODO : Feature: Auswahl von zwischenzeiten beim Hinzufügen von Untertasks
      * TODO : Feature: Toast ob Update der Kundenliste erfolgt
      * TODO : Feature: Start und Endzeit Manuell anpassen
@@ -47,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     // List with customers
     private ArrayList<Customer> customers;
     // List with all tasks
-    private ArrayList<Task> allTasks;
+    private ArrayList<TaskTemplate> allTasks;
     private PersistenceManager persistenceManager;
 
     //GUI Elements
@@ -132,12 +126,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buildTaskList() {
-        allTasks=new ArrayList<Task>();
+        allTasks=new ArrayList<TaskTemplate>();
         for (Customer c : customers) {
             //if a task in a customer's task list is not yet in the list of all tasks, add it
-            for (Task task : c.getTasks()) {
+            for (TaskTemplate task : c.getTasks()) {
                 Boolean isTaskNew = true;
-                for (Task t : allTasks) {
+                for (TaskTemplate t : allTasks) {
                     if (t.getName().equals(task.getName())) { //this should work as task is comparable
                         isTaskNew = false;
                     }

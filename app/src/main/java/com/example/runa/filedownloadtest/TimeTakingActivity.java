@@ -5,15 +5,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by runa on 26.09.17.
@@ -23,7 +20,7 @@ public class TimeTakingActivity extends AppCompatActivity {
 
     private Context context;
     private Customer customer;
-    private Task task;
+    private TaskTemplate task;
     private long startTime;   //last starting time
     private long totalTime;  //total time in milliseconds
     private boolean isPaused;
@@ -48,7 +45,7 @@ public class TimeTakingActivity extends AppCompatActivity {
         startTime=System.currentTimeMillis();
         totalTime=0;
         isPaused=false;
-        task=(Task)getIntent().getExtras().get("task");
+        task=(TaskTemplate)getIntent().getExtras().get("task");
         customer=(Customer)getIntent().getExtras().get("customer");
         countDownTimer=new CountDownTimer(86400000, 1000) {
             @Override

@@ -24,13 +24,13 @@ public class TaskAdapter extends ArrayAdapter implements Filterable {
     private TaskAdapter.TaskFilter mFilter = new TaskAdapter.TaskFilter();
     private Context context;
     //given task lists
-    private ArrayList<Task> allTasks;
-    private ArrayList<Task> customerTasks;
+    private ArrayList<TaskTemplate> allTasks;
+    private ArrayList<TaskTemplate> customerTasks;
     //resulting tasks
-    private ArrayList<Task> filteredTasks;
+    private ArrayList<TaskTemplate> filteredTasks;
 
 
-    public TaskAdapter(Context context, int layoutResourceId, ArrayList<Task> customerTasks, ArrayList<Task> allTasks) {
+    public TaskAdapter(Context context, int layoutResourceId, ArrayList<TaskTemplate> customerTasks, ArrayList<TaskTemplate> allTasks) {
         super(context, layoutResourceId, customerTasks);
         this.context=context;
         this.customerTasks=customerTasks;
@@ -38,7 +38,7 @@ public class TaskAdapter extends ArrayAdapter implements Filterable {
         this.filteredTasks=customerTasks;
     }
 
-    public Task getItem(int position){
+    public TaskTemplate getItem(int position){
         return filteredTasks.get(position);
     }
 
@@ -55,7 +55,7 @@ public class TaskAdapter extends ArrayAdapter implements Filterable {
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         //Log.d("position", Integer.toString(position));
-        Task task = filteredTasks.get(position);
+        TaskTemplate task = filteredTasks.get(position);
         if (convertView == null) {
             inflater.inflate(R.layout.customer_view, null, false);
         }
@@ -101,7 +101,7 @@ public class TaskAdapter extends ArrayAdapter implements Filterable {
                 //undo last filtering
                 filteredTasks.clear();
                 //check allTasks if they contain the filtered string
-                for (Task t : allTasks){
+                for (TaskTemplate t : allTasks){
                     if (t.getName().toLowerCase().contains(filterString)){
                         filteredTasks.add(t);
                     }
@@ -116,7 +116,7 @@ public class TaskAdapter extends ArrayAdapter implements Filterable {
         @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredTasks = (ArrayList<Task>) results.values;
+            filteredTasks = (ArrayList<TaskTemplate>) results.values;
             notifyDataSetChanged();
         }
 

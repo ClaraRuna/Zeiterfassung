@@ -11,14 +11,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * Created by runa on 22.09.17.
@@ -82,7 +76,7 @@ public class PersistenceManager {
                     reader.beginArray();
                     while (reader.hasNext()){
                         reader.beginObject();
-                        Task task = new Task();
+                        TaskTemplate task = new TaskTemplate();
                         while (reader.hasNext()){
                             name = reader.nextName();
                             Log.d("reader.nextName()", name);
@@ -109,7 +103,7 @@ public class PersistenceManager {
             reader.endObject();
             Log.d("PersistenceManager", "evaluated customer " +customer.toString());
             Log.d("TaskList", ":::::::::::::::::::::::::::::::");
-            for (Task t : customer.getTasks()){
+            for (TaskTemplate t : customer.getTasks()){
                 Log.d(t.getName(), Integer.toString(t.getCount()));
             }
             return customer;
@@ -150,8 +144,8 @@ public class PersistenceManager {
         return out;
     }
 
-    private void writeTasks(JsonWriter writer, SortedSet<Task> tasks) throws IOException{
-        for (Task t : tasks){
+    private void writeTasks(JsonWriter writer, SortedSet<TaskTemplate> tasks) throws IOException{
+        for (TaskTemplate t : tasks){
             writer.beginObject();
             writer.name("Name").value(t.getName());
             writer.name("Count").value(t.getCount());

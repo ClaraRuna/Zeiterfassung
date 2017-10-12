@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.logging.Filter;
 
 /**
  * Created by runa on 24.09.17.
@@ -26,8 +25,8 @@ import java.util.logging.Filter;
 public class TaskSelectionActivity extends AppCompatActivity {
 
     private Context context;
-    private ArrayList<Task> customerTasks;
-    private ArrayList<Task> allTasks;
+    private ArrayList<TaskTemplate> customerTasks;
+    private ArrayList<TaskTemplate> allTasks;
     private ArrayAdapter taskListAdapter;
     private Customer customer;
     private PersistenceManager persistenceManager;
@@ -53,9 +52,9 @@ public class TaskSelectionActivity extends AppCompatActivity {
     private void initializeData(){
         customer = (Customer) getIntent().getExtras().get("customer") ;
         Log.d("selected customer", customer.toString());
-        customerTasks=new ArrayList<Task>(customer.getTasks());
+        customerTasks=new ArrayList<TaskTemplate>(customer.getTasks());
         Log.d("customerTasks.size()", Integer.toString(customerTasks.size()));
-        allTasks=new ArrayList<Task>((ArrayList<Task>)getIntent().getExtras().get("allTasks"));
+        allTasks=new ArrayList<TaskTemplate>((ArrayList<TaskTemplate>)getIntent().getExtras().get("allTasks"));
         //sort tasks by count
         Collections.sort(customerTasks);
         Collections.sort(allTasks);
@@ -70,7 +69,7 @@ public class TaskSelectionActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //create a new task
-                Task task = new Task ();
+                TaskTemplate task = new TaskTemplate();
                 task.setName(etSearch.getText().toString());
                 startTimeTakingActivity(task);
                 btnNewTask.setVisibility(View.INVISIBLE);
@@ -123,11 +122,11 @@ public class TaskSelectionActivity extends AppCompatActivity {
     }
 
     private void startTimeTakingActivity(int position){
-        Task task = (Task) taskListAdapter.getItem(position);
+        TaskTemplate task = (TaskTemplate) taskListAdapter.getItem(position);
         startTimeTakingActivity(task);
     }
 
-    private void startTimeTakingActivity (Task task){
+    private void startTimeTakingActivity (TaskTemplate task){
         customer.doTask(task);
         Log.d("executing", "customer.doTask(task)");
         Log.d("c.getTasks.size()", Integer.toString(customer.getTasks().size()));
